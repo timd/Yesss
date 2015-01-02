@@ -26,8 +26,8 @@
 
 #define kCellBorderWidth 1.0f
 #define kStatusBarOffsetValue 20.0f
-#define kPieceWidthMultiplier 2.0f
-#define kPieceHeightMultiplier 3.0f
+#define kPieceWidthMultiplier 1.0f
+#define kPieceHeightMultiplier 1.0f
 
 @implementation MainViewController
 
@@ -75,22 +75,16 @@
 
             // Check if cell should be occupied
             int currentRowValue = [[self.boardArray objectAtIndex:row] intValue];
-            NSLog(@"Cell %d x %d", row, col);
-            NSLog(@"current row value = %d", currentRowValue);
             
             int currentColumnInt = pow(2, col);
-            NSLog(@"currentColumnInt = %d", currentColumnInt);
             
             // AND the two together
             int result = currentRowValue & currentColumnInt;
-            NSLog(@"result = %d", result);
             
             if (result == currentColumnInt) {
-                NSLog(@"should be a piece here");
                 [cellView setBackgroundColor:[UIColor redColor]];
             } else {
-//                NSLog(@"no piece here");
-                [cellView setBackgroundColor:[UIColor greenColor]];
+                [cellView setBackgroundColor:[UIColor clearColor]];
             }
 
             [self.boardView addSubview:cellView];
@@ -214,7 +208,31 @@
         return;
     }
 
+    // Check for existing piece at this location
+    if ([self checkForOccupiedDropLocation:constrainedDropPoint]) {
+        // Cannot drop piece at this location,
+        // animate it back to the starting point
+        [UIView animateWithDuration:0.25f
+                              delay:0.0f
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             
+                             [self.panningView setFrame:CGRectMake(self.pieceView.frame.origin.x,
+                                                                   self.pieceView.frame.origin.y,
+                                                                   self.panningView.frame.size.width,
+                                                                   self.panningView.frame.size.height)];
+                             
+                         } completion:^(BOOL finished) {
+                             
+                             [self.panningView removeFromSuperview];
+                             self.panningView = nil;
+                             
+                         }];
+        
+        return;
+    }
 
+    
     // Drop piece on board
     UIView *droppedPiece = [[UIView alloc] initWithFrame:self.panningView.frame];
     [droppedPiece setBackgroundColor:self.panningView.backgroundColor];
@@ -281,6 +299,44 @@
     // Piece does not extend beyond board boundaries
     
     return NO;
+}
+
+-(BOOL)checkForOccupiedDropLocation:(CGPoint)constrainedDropPoint {
+    
+    // Convert finger location to cell
+    int droppedRow = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
+    int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
+    
+    // Check if there's a piece at this location
+    // Get row from board array
+    
+    // Check if cell is occupied
+    int currentRowValue = [[self.boardArray objectAtIndex:droppedCol] intValue];
+    int currentColumnInt = pow(2, droppedRow);
+    
+    // AND the two together
+    int result = currentRowValue & currentColumnInt;
+    
+    if (result == currentColumnInt) {
+        NSLog(@"The cell is occuplied");
+        return YES;
+    } else {
+        NSLog(@"the cell is empty");
+        return NO;
+    }
+
+}
+
+-(int)calculateRowNumberForConstrainedDropPoint:(CGPoint)constrainedDropPoint {
+    
+    float xPosition = constrainedDropPoint.x;
+    return (xPosition / self.cellSize.height);
+    
+}
+
+-(int)calculateColNumberForConstrainedDropPoint:(CGPoint)constrainedDropPoint {
+    float yPosition = constrainedDropPoint.y;
+    return (yPosition / self.cellSize.width);
 }
 
 @end
