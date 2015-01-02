@@ -96,6 +96,10 @@
     [self.xCoord setText:@"-"];
     [self.yCoord setText:@"-"];
     
+    // Add tap catcher for cell removal
+    UITapGestureRecognizer *mainBoardTapCatcher = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];
+    [self.boardView addGestureRecognizer:mainBoardTapCatcher];
+    
 }
 
 -(void)setupPieces {
@@ -109,7 +113,7 @@
 
 -(void)setupBoard {
     
-    NSArray *boardLayout = @[@512, @256, @128, @128, @37, @29, @14, @0, @12, @4];
+    NSArray *boardLayout = @[@512, @0, @0, @0, @0, @0, @0, @0, @0, @0];
     self.boardArray = [boardLayout mutableCopy];
     
 }
@@ -146,17 +150,46 @@
 }
 
 -(IBAction)didTapToRemovePieceFromBoard:(id)sender {
-    // Place moving piece
     
     UIGestureRecognizer *recognizer = (UIGestureRecognizer *)sender;
+    CGPoint tappedPoint = [recognizer locationInView:self.boardView];
+
+    CGPoint constrainedDropPoint = [self calculateConstrainedDropPointForLocation:tappedPoint];
+
+    int droppedCol = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
+    int droppedRow = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
+
+    // Check if there is a piece at the tapped location
+    if ([self checkForOccupiedDropLocation:constrainedDropPoint]) {
     
-    UIView *tappedView = recognizer.view;
-    
-    [self.piecesOnBoardArray removeObject:tappedView];
-    [tappedView removeFromSuperview];
-    tappedView = nil;
+        int inversionValue = pow(2, droppedCol);
+        int oldRowValue = [[self.boardArray objectAtIndex:droppedRow] intValue];
+        int newRowValue = oldRowValue - inversionValue;
+        
+        [self.boardArray replaceObjectAtIndex:droppedRow withObject:[NSNumber numberWithInt:newRowValue]];
+
+        // Remove pieces from the board
+        for (UIView *view in self.boardView.subviews) {
+            [view removeFromSuperview];
+        }
+        
+        [self drawBoard];
+
+    }
     
 }
+
+-(IBAction)didTapRedrawBoard:(id)sender {
+    
+    for (UIView *view in self.piecesOnBoardArray) {
+        [view removeFromSuperview];
+    }
+    
+    [self.piecesOnBoardArray removeAllObjects];
+    
+    [self drawBoard];
+}
+
 
 #pragma mark -
 #pragma mark Panning methods
@@ -232,7 +265,6 @@
         return;
     }
 
-    
     // Drop piece on board
     UIView *droppedPiece = [[UIView alloc] initWithFrame:self.panningView.frame];
     [droppedPiece setBackgroundColor:self.panningView.backgroundColor];
@@ -258,6 +290,21 @@
     [self.xCoord setText:@"-"];
     [self.yCoord setText:@"-"];
     
+    // Add the piece to the board array
+    // Convert finger location to cell
+    int droppedRow = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
+    int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
+    
+    // Get the current row value
+    int currentRowValue = [[self.boardArray objectAtIndex:droppedCol] intValue];
+    int currentColumnInt = pow(2, droppedRow);
+    
+    // OR the two together to get the new row value
+    int newRowValue = currentRowValue | currentColumnInt;
+    
+    // Update the board
+    [self.boardArray replaceObjectAtIndex:droppedCol withObject:[NSNumber numberWithInt:newRowValue]];
+     
 }
 
 
