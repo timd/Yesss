@@ -15,6 +15,8 @@
 @property (nonatomic, strong) UIView *panningView;
 @property (nonatomic, strong) NSMutableArray *piecesOnBoardArray;
 
+@property (nonatomic, strong) NSMutableArray *boardArray;
+
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) CGSize pieceSize;
 
@@ -33,6 +35,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    
+    [self setupBoard];
     [self drawBoard];
     [self setupPieces];
 }
@@ -60,7 +64,7 @@
         
         // Draw columns
         for (int col = 0; col < 10; col++) {
-
+            
             CGFloat xPosition = col * self.cellSize.width;
             CGFloat yPosition = row * self.cellSize.height;
             
@@ -68,6 +72,26 @@
             
             cellView.layer.borderColor = [UIColor blackColor].CGColor;
             cellView.layer.borderWidth = kCellBorderWidth;
+
+            // Check if cell should be occupied
+            int currentRowValue = [[self.boardArray objectAtIndex:row] intValue];
+            NSLog(@"Cell %d x %d", row, col);
+            NSLog(@"current row value = %d", currentRowValue);
+            
+            int currentColumnInt = pow(2, col);
+            NSLog(@"currentColumnInt = %d", currentColumnInt);
+            
+            // AND the two together
+            int result = currentRowValue & currentColumnInt;
+            NSLog(@"result = %d", result);
+            
+            if (result == currentColumnInt) {
+                NSLog(@"should be a piece here");
+                [cellView setBackgroundColor:[UIColor redColor]];
+            } else {
+//                NSLog(@"no piece here");
+                [cellView setBackgroundColor:[UIColor greenColor]];
+            }
 
             [self.boardView addSubview:cellView];
             
@@ -87,6 +111,13 @@
     UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
     [self.pieceView addGestureRecognizer:panRecognizer];
 
+}
+
+-(void)setupBoard {
+    
+    NSArray *boardLayout = @[@512, @256, @128, @128, @37, @29, @14, @0, @12, @4];
+    self.boardArray = [boardLayout mutableCopy];
+    
 }
 
 #pragma mark -
