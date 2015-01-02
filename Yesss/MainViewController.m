@@ -23,9 +23,9 @@
 @end
 
 #define kCellBorderWidth 1.0f
-
-#define kPieceWidthMultiplier 3.0f
-#define kPieceHeightMultiplier 2.0f
+#define kStatusBarOffsetValue 20.0f
+#define kPieceWidthMultiplier 2.0f
+#define kPieceHeightMultiplier 3.0f
 
 @implementation MainViewController
 
@@ -46,7 +46,10 @@
 
 -(void)drawBoard {
     
-    NSUInteger boardHeight = self.view.frame.size.height;
+    NSUInteger boardHeight = self.view.frame.size.height - 20;
+    NSUInteger boardWidth = boardHeight;
+    
+    [self.boardView setFrame:CGRectMake(0, kStatusBarOffsetValue, boardWidth, boardHeight)];
     
     self.cellSize = CGSizeMake(boardHeight/10, boardHeight/10);
     
@@ -99,56 +102,23 @@
     if (panRecognizer.state == UIGestureRecognizerStateBegan) {
         
         // Add moving piece to the board
-        self.panningView = [[UIView alloc] initWithFrame:CGRectMake(self.pieceView.frame.origin.x,
-                                                                    self.pieceView.frame.origin.y,
-                                                                    self.pieceSize.width - 2,
-                                                                    self.pieceSize.height -2)];
-        [self.panningView setBackgroundColor:[UIColor greenColor]];
-        [self.view addSubview:self.panningView];
+        [self addPanningPieceToBoard];
         
     }
     
     if (panRecognizer.state == UIGestureRecognizerStateChanged) {
         
-        [self.xCoord setText:[NSString stringWithFormat:@"%0.0f", fingerLocation.x]];
-        [self.yCoord setText:[NSString stringWithFormat:@"%0.0f", fingerLocation.y]];
-        
-        [self.panningView setFrame:CGRectMake(fingerLocation.x, fingerLocation.y, self.panningView.frame.size.width, self.panningView.frame.size.height)];
+        [self movePanningPieceToFingerLocation:fingerLocation];
         
     }
     
     if (panRecognizer.state == UIGestureRecognizerStateEnded) {
         
-        CGPoint constrainedDropPoint = [self calculateConstrainedDropPointForLocation:fingerLocation];
+        [self dropPanningPieceAtLocation:fingerLocation];
         
-        // Drop piece on board
-        UIView *droppedPiece = [[UIView alloc] initWithFrame:self.panningView.frame];
-        [droppedPiece setBackgroundColor:self.panningView.backgroundColor];
-        
-        // Constrain location
-        [droppedPiece setFrame:CGRectMake(constrainedDropPoint.x + kCellBorderWidth,
-                                          constrainedDropPoint.y + kCellBorderWidth ,
-                                          droppedPiece.frame.size.width,
-                                          droppedPiece.frame.size.height)];
-        
-        [self.view addSubview:droppedPiece];
-        [self.piecesOnBoardArray addObject:droppedPiece];
-        
-        // Add gesture recognizer to piece
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];
-        [tapRecognizer setNumberOfTapsRequired:1];
-        [tapRecognizer setNumberOfTouchesRequired:1];
-        [droppedPiece addGestureRecognizer:tapRecognizer];
-        
-        [self.panningView removeFromSuperview];
-        self.panningView = nil;
-        
-        [self.xCoord setText:@"-"];
-        [self.yCoord setText:@"-"];
     }
     
 }
-
 
 -(IBAction)didTapToRemovePieceFromBoard:(id)sender {
     // Place moving piece
@@ -164,6 +134,86 @@
 }
 
 #pragma mark -
+#pragma mark Panning methods
+
+-(void)addPanningPieceToBoard {
+
+    self.panningView = [[UIView alloc] initWithFrame:CGRectMake(self.pieceView.frame.origin.x,
+                                                                self.pieceView.frame.origin.y,
+                                                                self.pieceSize.width - 2,
+                                                                self.pieceSize.height -2)];
+    [self.panningView setBackgroundColor:[UIColor greenColor]];
+    [self.view addSubview:self.panningView];
+
+}
+
+-(void)movePanningPieceToFingerLocation:(CGPoint)fingerLocation {
+
+    [self.xCoord setText:[NSString stringWithFormat:@"%0.0f", fingerLocation.x]];
+    [self.yCoord setText:[NSString stringWithFormat:@"%0.0f", fingerLocation.y]];
+
+    [self.panningView setFrame:CGRectMake(fingerLocation.x, fingerLocation.y, self.panningView.frame.size.width, self.panningView.frame.size.height)];
+
+}
+
+-(void)dropPanningPieceAtLocation:(CGPoint)fingerLocation {
+    
+    CGPoint constrainedDropPoint = [self calculateConstrainedDropPointForLocation:fingerLocation];
+
+    if ([self checkForIllegalDropLocation:constrainedDropPoint]) {
+        // Cannot drop piece at this location,
+        // animate it back to the starting point
+        [UIView animateWithDuration:0.25f
+                              delay:0.0f
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+
+                             [self.panningView setFrame:CGRectMake(self.pieceView.frame.origin.x,
+                                                                   self.pieceView.frame.origin.y,
+                                                                   self.panningView.frame.size.width,
+                                                                   self.panningView.frame.size.height)];
+
+                         } completion:^(BOOL finished) {
+                             
+                             [self.panningView removeFromSuperview];
+                             self.panningView = nil;
+                             
+                         }];
+        
+        return;
+    }
+
+
+    // Drop piece on board
+    UIView *droppedPiece = [[UIView alloc] initWithFrame:self.panningView.frame];
+    [droppedPiece setBackgroundColor:self.panningView.backgroundColor];
+
+    // Constrain location
+    [droppedPiece setFrame:CGRectMake(constrainedDropPoint.x + kCellBorderWidth,
+                                      constrainedDropPoint.y + kCellBorderWidth ,
+                                      droppedPiece.frame.size.width,
+                                      droppedPiece.frame.size.height)];
+
+    [self.view addSubview:droppedPiece];
+    [self.piecesOnBoardArray addObject:droppedPiece];
+
+    // Add gesture recognizer to piece to allow removal
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];
+    [tapRecognizer setNumberOfTapsRequired:1];
+    [tapRecognizer setNumberOfTouchesRequired:1];
+    [droppedPiece addGestureRecognizer:tapRecognizer];
+
+    [self.panningView removeFromSuperview];
+    self.panningView = nil;
+
+    [self.xCoord setText:@"-"];
+    [self.yCoord setText:@"-"];
+    
+}
+
+
+
+#pragma mark -
 #pragma mark Calculation methods
 
 -(CGPoint)calculateConstrainedDropPointForLocation:(CGPoint)fingerLocation {
@@ -175,11 +225,31 @@
     float modY = floorf(droppedCellY);
     
     NSInteger newXLocation = modX * self.cellSize.width;
-    NSInteger newYLocation = modY * self.cellSize.height + 20; // offset 20 to account for status bar
+    NSInteger newYLocation = modY * self.cellSize.height + kStatusBarOffsetValue; // offset 20 to account for status bar
     
     return CGPointMake(newXLocation, newYLocation);
     
 }
 
+-(BOOL)checkForIllegalDropLocation:(CGPoint)constrainedDropPoint {
+    
+    // Check if dropped piece extends beyond board boundaries
+    float rightEdgeOfPiece = constrainedDropPoint.x + self.pieceSize.width;
+    
+    if (rightEdgeOfPiece > (self.boardView.frame.size.width)) {
+        return YES;
+    }
+    
+    // Calculate bottom edge of peice and adjust for status bar offset
+    float bottomEdgeOfPiece = constrainedDropPoint.y + self.pieceSize.height - kStatusBarOffsetValue;
+
+    if (bottomEdgeOfPiece > (self.boardView.frame.size.height)) {
+        return YES;
+    }
+    
+    // Piece does not extend beyond board boundaries
+    
+    return NO;
+}
 
 @end

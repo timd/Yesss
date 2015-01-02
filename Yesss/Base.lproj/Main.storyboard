@@ -71,10 +71,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="LSl-Bv-Vqh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="0ot-oO-NN3"/>
+                            <constraint firstItem="LSl-Bv-Vqh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" placeholder="YES" id="0ot-oO-NN3"/>
                             <constraint firstAttribute="trailing" secondItem="mKj-RP-SNr" secondAttribute="trailing" constant="16" id="3EA-PA-6QC"/>
                             <constraint firstAttribute="trailing" secondItem="QXZ-5N-b9N" secondAttribute="trailing" constant="16" id="4FN-bb-77J"/>
-                            <constraint firstItem="LSl-Bv-Vqh" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="height" id="535-0f-tMj"/>
+                            <constraint firstItem="LSl-Bv-Vqh" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="height" placeholder="YES" id="535-0f-tMj"/>
                             <constraint firstAttribute="trailing" secondItem="F9k-IH-5ff" secondAttribute="trailing" constant="16" id="FQA-K8-YX3"/>
                             <constraint firstItem="fem-2t-x6R" firstAttribute="top" secondItem="1tC-yd-z64" secondAttribute="bottom" constant="8" id="Fpf-Jy-pGN"/>
                             <constraint firstAttribute="bottom" secondItem="fem-2t-x6R" secondAttribute="bottom" constant="20" id="JKt-2n-57V"/>
@@ -84,8 +84,8 @@
                             <constraint firstItem="F9k-IH-5ff" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="20" id="VDl-yh-Rd1"/>
                             <constraint firstAttribute="trailing" secondItem="fem-2t-x6R" secondAttribute="trailing" constant="63" id="gnb-2u-QVy"/>
                             <constraint firstAttribute="trailing" secondItem="1tC-yd-z64" secondAttribute="trailing" constant="63" id="pzp-fx-BC9"/>
-                            <constraint firstItem="LSl-Bv-Vqh" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="20" id="xzZ-i7-bxC"/>
-                            <constraint firstAttribute="bottom" secondItem="LSl-Bv-Vqh" secondAttribute="bottom" id="z7u-fT-kf3"/>
+                            <constraint firstItem="LSl-Bv-Vqh" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="20" placeholder="YES" id="xzZ-i7-bxC"/>
+                            <constraint firstAttribute="bottom" secondItem="LSl-Bv-Vqh" secondAttribute="bottom" placeholder="YES" id="z7u-fT-kf3"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
