@@ -65,8 +65,15 @@
     
     self.pieceSize = CGSizeMake(self.cellSize.width * kPieceWidthMultiplier, self.cellSize.height * kPieceHeightMultiplier);
     
+    // Remove any existing subviews
+    for (UIView *view in self.boardView.subviews) {
+        [view removeFromSuperview];
+    }
+    
     // Draw rows
     for (int row = 0; row < 10; row++) {
+        
+        NSMutableArray *rowArray = [self.boardArray objectAtIndex:row];
         
         // Draw columns
         for (int col = 0; col < 10; col++) {
@@ -80,14 +87,9 @@
             cellView.layer.borderWidth = kCellBorderWidth;
 
             // Check if cell should be occupied
-            int currentRowValue = [[self.boardArray objectAtIndex:row] intValue];
+            int currentRowValue = [[rowArray objectAtIndex:col] intValue];
             
-            int currentColumnInt = pow(2, col);
-            
-            // AND the two together
-            int result = currentRowValue & currentColumnInt;
-            
-            if (result == currentColumnInt) {
+            if (currentRowValue != 0) {
                 [cellView setBackgroundColor:[UIColor redColor]];
             } else {
                 [cellView setBackgroundColor:[UIColor clearColor]];
@@ -101,11 +103,7 @@
     
     [self.xCoord setText:@"-"];
     [self.yCoord setText:@"-"];
-    
-    // Add tap catcher for cell removal
-    UITapGestureRecognizer *mainBoardTapCatcher = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];
-    [self.boardView addGestureRecognizer:mainBoardTapCatcher];
-    
+        
 }
 
 -(void)setupPieces {
@@ -118,33 +116,31 @@
     NSArray *row3 = nil;
     
     // Piece 1
-    row0 = @[@1, @1];
-    row1 = @[@1, @0];
-    row2 = @[@1, @1];
-    Piece *pieceOne = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor redColor] andShape:@[row0, row1, row2]];
+    row0 = @[@1];
+    Piece *pieceOne = [[Piece alloc] initWithColumns:1 andRows:1 andColor:[UIColor redColor] andShape:@[row0]];
     
     // Piece 2
     row0 = @[@1, @1];
     row1 = @[@0, @1];
     row2 = @[@1, @1];
-    Piece *pieceTwo = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor redColor] andShape:@[row0, row1, row2]];
+    Piece *pieceTwo = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor blueColor] andShape:@[row0, row1, row2]];
 
     // Piece 2
     row0 = @[@1];
     row1 = @[@1];
     row2 = @[@1];
     row3 = @[@1];
-    Piece *pieceThree = [[Piece alloc] initWithColumns:1 andRows:4 andColor:[UIColor redColor] andShape:@[row0, row1, row2, row3]];
+    Piece *pieceThree = [[Piece alloc] initWithColumns:1 andRows:4 andColor:[UIColor greenColor] andShape:@[row0, row1, row2, row3]];
 
     // Piece 2
     row0 = @[@1, @1, @1, @1];
-    Piece *pieceFour = [[Piece alloc] initWithColumns:4 andRows:1 andColor:[UIColor redColor] andShape:@[row0]];
+    Piece *pieceFour = [[Piece alloc] initWithColumns:4 andRows:1 andColor:[UIColor yellowColor] andShape:@[row0]];
 
     // Piece 2
     row0 = @[@0, @1, @0];
     row1 = @[@1, @1, @1];
     row2 = @[@0, @1, @0];
-    Piece *pieceFive = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor redColor] andShape:@[row0, row1, row2]];
+    Piece *pieceFive = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor brownColor] andShape:@[row0, row1, row2]];
 
     [self.piecesOnBoardArray addObjectsFromArray:@[pieceOne, pieceTwo, pieceThree, pieceFour, pieceFive]];
     
@@ -152,7 +148,18 @@
 
 -(void)setupBoard {
     
-    NSArray *boardLayout = @[@512, @0, @0, @0, @0, @0, @0, @0, @0, @0];
+    NSMutableArray *row0 = [@[@1,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row1 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row2 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row3 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row4 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row5 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row6 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row7 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row8 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row9 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    
+    NSArray *boardLayout = @[row0, row1, row2, row3, row4, row5, row6, row7, row8, row9];
     self.boardArray = [boardLayout mutableCopy];
     
     UIPanGestureRecognizer *panRecognizerOne = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
@@ -167,6 +174,14 @@
     [self.templatePieceFour addGestureRecognizer:panRecognizerFour];
     [self.templatePieceFive addGestureRecognizer:panRecognizerFive];
 
+    // Set up tap catcher to remove piece from board
+    UITapGestureRecognizer *pieceRemover = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];
+    [pieceRemover setNumberOfTapsRequired:1];
+    [pieceRemover setNumberOfTouchesRequired:1];
+    
+    [self.boardView addGestureRecognizer:pieceRemover];
+    
+    
 }
 
 #pragma mark -
@@ -216,22 +231,16 @@
 
     CGPoint constrainedDropPoint = [self calculateConstrainedDropPointForLocation:tappedPoint];
 
-    int droppedCol = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
-    int droppedRow = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
+    int droppedRow = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
+    int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
 
     // Check if there is a piece at the tapped location
     if ([self checkForOccupiedDropLocation:constrainedDropPoint]) {
     
-        int inversionValue = pow(2, droppedCol);
-        int oldRowValue = [[self.boardArray objectAtIndex:droppedRow] intValue];
-        int newRowValue = oldRowValue - inversionValue;
-        
-        [self.boardArray replaceObjectAtIndex:droppedRow withObject:[NSNumber numberWithInt:newRowValue]];
+        // There is a piece, need to remove it
+        NSMutableArray *rowArray = [self.boardArray objectAtIndex:droppedRow];
 
-        // Remove pieces from the board
-        for (UIView *view in self.boardView.subviews) {
-            [view removeFromSuperview];
-        }
+        [rowArray replaceObjectAtIndex:droppedCol withObject:@0];
         
         [self drawBoard];
 
@@ -317,24 +326,6 @@
         return;
     }
 
-    // Drop piece on board
-    UIView *droppedPiece = [[UIView alloc] initWithFrame:self.panningView.frame];
-    [droppedPiece setBackgroundColor:self.panningView.backgroundColor];
-
-    // Constrain location
-    [droppedPiece setFrame:CGRectMake(constrainedDropPoint.x + kCellBorderWidth,
-                                      constrainedDropPoint.y + kCellBorderWidth ,
-                                      droppedPiece.frame.size.width,
-                                      droppedPiece.frame.size.height)];
-
-    [self.view addSubview:droppedPiece];
-
-    // Add gesture recognizer to piece to allow removal
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];
-    [tapRecognizer setNumberOfTapsRequired:1];
-    [tapRecognizer setNumberOfTouchesRequired:1];
-    [droppedPiece addGestureRecognizer:tapRecognizer];
-
     [self.panningView removeFromSuperview];
     self.panningView = nil;
 
@@ -347,15 +338,13 @@
     int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
     
     // Get the current row value
-    int currentRowValue = [[self.boardArray objectAtIndex:droppedCol] intValue];
-    int currentColumnInt = pow(2, droppedRow);
+    NSMutableArray *rowArray = [self.boardArray objectAtIndex:droppedRow];
     
-    // OR the two together to get the new row value
-    int newRowValue = currentRowValue | currentColumnInt;
+    // Update the current row
+    [rowArray replaceObjectAtIndex:droppedCol withObject:@1];
     
-    // Update the board
-    [self.boardArray replaceObjectAtIndex:droppedCol withObject:[NSNumber numberWithInt:newRowValue]];
-     
+    [self drawBoard];
+    
 }
 
 
@@ -409,13 +398,11 @@
     // Get row from board array
     
     // Check if cell is occupied
-    int currentRowValue = [[self.boardArray objectAtIndex:droppedCol] intValue];
-    int currentColumnInt = pow(2, droppedRow);
+    NSMutableArray *rowArray = [self.boardArray objectAtIndex:droppedRow];
     
-    // AND the two together
-    int result = currentRowValue & currentColumnInt;
-    
-    if (result == currentColumnInt) {
+    int currentRowValue = [[rowArray objectAtIndex:droppedCol] intValue];
+
+    if (currentRowValue != 0) {
         NSLog(@"The cell is occuplied");
         return YES;
     } else {
@@ -427,14 +414,14 @@
 
 -(int)calculateRowNumberForConstrainedDropPoint:(CGPoint)constrainedDropPoint {
     
-    float xPosition = constrainedDropPoint.x;
-    return (xPosition / self.cellSize.height);
+    float yPosition = constrainedDropPoint.y;
+    return (yPosition / self.cellSize.height);
     
 }
 
 -(int)calculateColNumberForConstrainedDropPoint:(CGPoint)constrainedDropPoint {
-    float yPosition = constrainedDropPoint.y;
-    return (yPosition / self.cellSize.width);
+    float xPosition = constrainedDropPoint.x;
+    return (xPosition / self.cellSize.width);
 }
 
 @end
