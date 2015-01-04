@@ -12,7 +12,12 @@
 
 @interface MainViewController ()
 @property (nonatomic, weak) IBOutlet UIView *boardView;
-@property (nonatomic, weak) IBOutlet UIView *pieceView;
+@property (nonatomic, weak) IBOutlet UIView *templatePieceOne;
+@property (nonatomic, weak) IBOutlet UIView *templatePieceTwo;
+@property (nonatomic, weak) IBOutlet UIView *templatePieceThree;
+@property (nonatomic, weak) IBOutlet UIView *templatePieceFour;
+@property (nonatomic, weak) IBOutlet UIView *templatePieceFive;
+
 @property (nonatomic, strong) UIView *panningView;
 @property (nonatomic, strong) NSMutableArray *piecesOnBoardArray;
 
@@ -150,10 +155,18 @@
     NSArray *boardLayout = @[@512, @0, @0, @0, @0, @0, @0, @0, @0, @0];
     self.boardArray = [boardLayout mutableCopy];
     
-    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
-    [self.pieceView addGestureRecognizer:panRecognizer];
-
+    UIPanGestureRecognizer *panRecognizerOne = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
+    UIPanGestureRecognizer *panRecognizerTwo = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
+    UIPanGestureRecognizer *panRecognizerThree = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
+    UIPanGestureRecognizer *panRecognizerFour = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
+    UIPanGestureRecognizer *panRecognizerFive = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
     
+    [self.templatePieceOne addGestureRecognizer:panRecognizerOne];
+    [self.templatePieceTwo addGestureRecognizer:panRecognizerTwo];
+    [self.templatePieceThree addGestureRecognizer:panRecognizerThree];
+    [self.templatePieceFour addGestureRecognizer:panRecognizerFour];
+    [self.templatePieceFive addGestureRecognizer:panRecognizerFive];
+
 }
 
 #pragma mark -
@@ -169,6 +182,8 @@
 -(IBAction)didPanPiece:(id)sender {
     
     UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)sender;
+    UIView *sendingView = panRecognizer.view;
+    NSUInteger tag = sendingView.tag;
     
     CGPoint fingerLocation = [panRecognizer locationInView:self.view];
 
@@ -176,7 +191,7 @@
     if (panRecognizer.state == UIGestureRecognizerStateBegan) {
         
         // Add moving piece to the board
-        [self addPanningPieceToBoard];
+        [self addPanningPieceToBoardWithPieceNumber:tag];
         
     }
     
@@ -233,10 +248,10 @@
 #pragma mark -
 #pragma mark Panning methods
 
--(void)addPanningPieceToBoard {
+-(void)addPanningPieceToBoardWithPieceNumber:(NSUInteger)tag {
     
     // Get shape
-    Piece *pieceToAdd = [self.piecesOnBoardArray objectAtIndex:4];
+    Piece *pieceToAdd = [self.piecesOnBoardArray objectAtIndex:tag];
     
     self.panningView = [pieceToAdd vendMovingViewForCellSize:self.pieceSize];
 
@@ -265,8 +280,7 @@
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
 
-                             [self.panningView setFrame:CGRectMake(self.pieceView.frame.origin.x,
-                                                                   self.pieceView.frame.origin.y,
+                             [self.panningView setFrame:CGRectMake(100, 100,
                                                                    self.panningView.frame.size.width,
                                                                    self.panningView.frame.size.height)];
 
@@ -289,8 +303,7 @@
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
                              
-                             [self.panningView setFrame:CGRectMake(self.pieceView.frame.origin.x,
-                                                                   self.pieceView.frame.origin.y,
+                             [self.panningView setFrame:CGRectMake(100, 100,
                                                                    self.panningView.frame.size.width,
                                                                    self.panningView.frame.size.height)];
                              
