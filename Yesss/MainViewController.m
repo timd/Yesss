@@ -23,6 +23,8 @@
 
 @property (nonatomic, strong) NSMutableArray *boardArray;
 
+@property (nonatomic, strong) Piece *pieceBeingMoved;
+
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) CGSize pieceSize;
 
@@ -103,7 +105,7 @@
     
     [self.xCoord setText:@"-"];
     [self.yCoord setText:@"-"];
-        
+    
 }
 
 -(void)setupPieces {
@@ -263,6 +265,8 @@
     Piece *pieceToAdd = [self.piecesOnBoardArray objectAtIndex:tag];
     
     self.panningView = [pieceToAdd vendMovingViewForCellSize:self.pieceSize];
+    
+    self.pieceBeingMoved = pieceToAdd;
 
     [self.view addSubview:self.panningView];
 
@@ -342,6 +346,8 @@
     
     // Update the current row
     [rowArray replaceObjectAtIndex:droppedCol withObject:@1];
+    
+    self.pieceBeingMoved = nil;
     
     [self drawBoard];
     
