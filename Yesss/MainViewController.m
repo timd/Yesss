@@ -395,13 +395,14 @@
             // Get the corresponding element from the shape array
             NSNumber *shapeCell = [shapeRow objectAtIndex:columnCount];
             
-            // Update the changed element
-            [rowBeingUpdated replaceObjectAtIndex:(columnCount + droppedCol) withObject:shapeCell];
+            // Update the changed element if there's something there
+            if (![shapeCell isEqualToNumber:@0]) {
+                [rowBeingUpdated replaceObjectAtIndex:(columnCount + droppedCol) withObject:shapeCell];
+            }
             
         }
         
     }
-    
     
     self.pieceBeingMoved = nil;
     
