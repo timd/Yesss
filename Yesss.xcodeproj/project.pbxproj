@@ -14,6 +14,7 @@
 		2268A3651A56A58B00756186 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2268A3641A56A58B00756186 /* Images.xcassets */; };
 		2268A3681A56A58B00756186 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2268A3661A56A58B00756186 /* LaunchScreen.xib */; };
 		2268A3741A56A58B00756186 /* YesssTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2268A3731A56A58B00756186 /* YesssTests.m */; };
+		2268A3851A5731E700756186 /* Piece.m in Sources */ = {isa = PBXBuildFile; fileRef = 2268A3841A5731E700756186 /* Piece.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		2268A36D1A56A58B00756186 /* YesssTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YesssTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2268A3721A56A58B00756186 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2268A3731A56A58B00756186 /* YesssTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YesssTests.m; sourceTree = "<group>"; };
+		2268A3831A5731E700756186 /* Piece.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Piece.h; sourceTree = "<group>"; };
+		2268A3841A5731E700756186 /* Piece.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Piece.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +89,7 @@
 				2268A3641A56A58B00756186 /* Images.xcassets */,
 				2268A3661A56A58B00756186 /* LaunchScreen.xib */,
 				2268A3571A56A58B00756186 /* Supporting Files */,
+				2268A3861A5732D300756186 /* Shapes */,
 			);
 			path = Yesss;
 			sourceTree = "<group>";
@@ -133,6 +137,15 @@
 				2268A3611A56A58B00756186 /* Main.storyboard */,
 			);
 			name = "View controllers";
+			sourceTree = "<group>";
+		};
+		2268A3861A5732D300756186 /* Shapes */ = {
+			isa = PBXGroup;
+			children = (
+				2268A3831A5731E700756186 /* Piece.h */,
+				2268A3841A5731E700756186 /* Piece.m */,
+			);
+			name = Shapes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +248,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2268A3851A5731E700756186 /* Piece.m in Sources */,
 				2268A3601A56A58B00756186 /* MainViewController.m in Sources */,
 				2268A35D1A56A58B00756186 /* AppDelegate.m in Sources */,
 				2268A35A1A56A58B00756186 /* main.m in Sources */,
@@ -430,6 +444,7 @@
 				2268A3791A56A58B00756186 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2268A37A1A56A58B00756186 /* Build configuration list for PBXNativeTarget "YesssTests" */ = {
 			isa = XCConfigurationList;
@@ -438,6 +453,7 @@
 				2268A37C1A56A58B00756186 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

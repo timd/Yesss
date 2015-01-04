@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "Piece.h"
 
 @interface MainViewController ()
 @property (nonatomic, weak) IBOutlet UIView *boardView;
@@ -105,16 +106,37 @@
 -(void)setupPieces {
     
     self.piecesOnBoardArray = [[NSMutableArray alloc] init];
+    
+    // Piece 1
+    Piece *pieceOne = [[Piece alloc] initWithWidth:2 andHeight:3 andColor:[UIColor redColor] andShape:@[@3, @1, @3]];
+    
+    // Piece 2
+    Piece *pieceTwo = [[Piece alloc] initWithWidth:3 andHeight:2 andColor:[UIColor blueColor] andShape:@[@5, @7]];
 
-    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
-    [self.pieceView addGestureRecognizer:panRecognizer];
+    // Piece 2
+    Piece *pieceThree = [[Piece alloc] initWithWidth:3 andHeight:2 andColor:[UIColor blueColor] andShape:@[@3, @2, @3]];
 
+    // Piece 2
+    Piece *pieceFour = [[Piece alloc] initWithWidth:3 andHeight:2 andColor:[UIColor blueColor] andShape:@[@7, @5]];
+
+    
 }
 
 -(void)setupBoard {
     
     NSArray *boardLayout = @[@512, @0, @0, @0, @0, @0, @0, @0, @0, @0];
     self.boardArray = [boardLayout mutableCopy];
+    
+    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanPiece:)];
+    [self.pieceView addGestureRecognizer:panRecognizer];
+
+    
+}
+
+#pragma mark -
+#pragma mark Setup methods
+
+-(void)setupShapes {
     
 }
 
