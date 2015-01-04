@@ -9,6 +9,7 @@
 #import "MainViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Piece.h"
+#import "PieceFactory.h"
 
 @interface MainViewController ()
 @property (nonatomic, weak) IBOutlet UIView *boardView;
@@ -147,48 +148,9 @@
 
 -(void)setupPieces {
     
-    self.piecesArray = [[NSMutableArray alloc] init];
-    
-    NSArray *row0 = nil;
-    NSArray *row1 = nil;
-    NSArray *row2 = nil;
-    NSArray *row3 = nil;
-    
-    // Piece 1
-    row0 = @[@1, @1];
-    row2 = @[@1, @1];
-    Piece *pieceOne = [[Piece alloc] initWithColumns:2 andRows:2 andColor:[UIColor redColor] andShape:@[row0, row2]];
-    [pieceOne setShapeId:1];
-    
-    // Piece 2
-    row0 = @[@2, @2];
-    row1 = @[@0, @2];
-    row2 = @[@2, @2];
-    Piece *pieceTwo = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor blueColor] andShape:@[row0, row1, row2]];
-    [pieceTwo setShapeId:2];
+    PieceFactory *factory = [[PieceFactory alloc] init];
+    self.piecesArray = [[factory setOfPieces] mutableCopy];
 
-    // Piece 2
-    row0 = @[@3];
-    row1 = @[@3];
-    row2 = @[@3];
-    row3 = @[@3];
-    Piece *pieceThree = [[Piece alloc] initWithColumns:1 andRows:4 andColor:[UIColor greenColor] andShape:@[row0, row1, row2, row3]];
-    [pieceThree setShapeId:3];
-
-    // Piece 2
-    row0 = @[@4, @4, @4, @4];
-    Piece *pieceFour = [[Piece alloc] initWithColumns:4 andRows:1 andColor:[UIColor yellowColor] andShape:@[row0]];
-    [pieceFour setShapeId:4];
-
-    // Piece 2
-    row0 = @[@0, @5, @0];
-    row1 = @[@5, @5, @5];
-    row2 = @[@0, @5, @0];
-    Piece *pieceFive = [[Piece alloc] initWithColumns:3 andRows:3 andColor:[UIColor brownColor] andShape:@[row0, row1, row2]];
-    [pieceFive setShapeId:5];
-
-    [self.piecesArray addObjectsFromArray:@[pieceOne, pieceTwo, pieceThree, pieceFour, pieceFive]];
-    
 }
 
 -(void)setupBoard {

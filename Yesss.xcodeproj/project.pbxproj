@@ -15,6 +15,7 @@
 		2268A3681A56A58B00756186 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2268A3661A56A58B00756186 /* LaunchScreen.xib */; };
 		2268A3741A56A58B00756186 /* YesssTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2268A3731A56A58B00756186 /* YesssTests.m */; };
 		2268A3851A5731E700756186 /* Piece.m in Sources */ = {isa = PBXBuildFile; fileRef = 2268A3841A5731E700756186 /* Piece.m */; };
+		2268A3891A59BB3400756186 /* PieceFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 2268A3881A59BB3400756186 /* PieceFactory.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,8 @@
 		2268A3731A56A58B00756186 /* YesssTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YesssTests.m; sourceTree = "<group>"; };
 		2268A3831A5731E700756186 /* Piece.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Piece.h; sourceTree = "<group>"; };
 		2268A3841A5731E700756186 /* Piece.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Piece.m; sourceTree = "<group>"; };
+		2268A3871A59BB3400756186 /* PieceFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PieceFactory.h; sourceTree = "<group>"; };
+		2268A3881A59BB3400756186 /* PieceFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PieceFactory.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +147,8 @@
 			children = (
 				2268A3831A5731E700756186 /* Piece.h */,
 				2268A3841A5731E700756186 /* Piece.m */,
+				2268A3871A59BB3400756186 /* PieceFactory.h */,
+				2268A3881A59BB3400756186 /* PieceFactory.m */,
 			);
 			name = Shapes;
 			sourceTree = "<group>";
@@ -250,6 +255,7 @@
 			files = (
 				2268A3851A5731E700756186 /* Piece.m in Sources */,
 				2268A3601A56A58B00756186 /* MainViewController.m in Sources */,
+				2268A3891A59BB3400756186 /* PieceFactory.m in Sources */,
 				2268A35D1A56A58B00756186 /* AppDelegate.m in Sources */,
 				2268A35A1A56A58B00756186 /* main.m in Sources */,
 			);
