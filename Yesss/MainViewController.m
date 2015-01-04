@@ -155,8 +155,9 @@
     NSArray *row3 = nil;
     
     // Piece 1
-    row0 = @[@1];
-    Piece *pieceOne = [[Piece alloc] initWithColumns:1 andRows:1 andColor:[UIColor redColor] andShape:@[row0]];
+    row0 = @[@1, @1];
+    row2 = @[@1, @1];
+    Piece *pieceOne = [[Piece alloc] initWithColumns:2 andRows:2 andColor:[UIColor redColor] andShape:@[row0, row2]];
     [pieceOne setShapeId:1];
     
     // Piece 2

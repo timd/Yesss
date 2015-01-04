@@ -22,5 +22,6 @@
 -(instancetype)initWithColumns:(NSUInteger)columns andRows:(NSUInteger)rows andColor:(UIColor *)color andShape:(NSArray *)shape;
 -(UIView *)vendMovingViewForCellSize:(CGSize)cellSize;
 -(UIView *)vendBoardViewForCellSize:(CGSize)cellSize;
+-(UIView *)vendSidebarViewForCellSize:(CGSize)cellSize;
 
 @end

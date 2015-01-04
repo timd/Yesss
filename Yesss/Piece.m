@@ -93,5 +93,11 @@
     return [self vendViewForAdjustedCellSize:cellSize];
 }
 
+-(UIView *)vendSidebarViewForCellSize:(CGSize)cellSize {
+    // Vend full-sized shape
+    CGSize newSize = CGSizeMake(cellSize.width / 2, cellSize.height / 2);
+    return [self vendViewForAdjustedCellSize:newSize];
+}
+
 
 @end
