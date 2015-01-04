@@ -107,18 +107,41 @@
     
     self.piecesOnBoardArray = [[NSMutableArray alloc] init];
     
+    NSArray *row0 = nil;
+    NSArray *row1 = nil;
+    NSArray *row2 = nil;
+    NSArray *row3 = nil;
+    
     // Piece 1
-    Piece *pieceOne = [[Piece alloc] initWithWidth:2 andHeight:3 andColor:[UIColor redColor] andShape:@[@3, @1, @3]];
+    row0 = @[@1, @1];
+    row1 = @[@1, @0];
+    row2 = @[@1, @1];
+    Piece *pieceOne = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor redColor] andShape:@[row0, row1, row2]];
     
     // Piece 2
-    Piece *pieceTwo = [[Piece alloc] initWithWidth:3 andHeight:2 andColor:[UIColor blueColor] andShape:@[@5, @7]];
+    row0 = @[@1, @1];
+    row1 = @[@0, @1];
+    row2 = @[@1, @1];
+    Piece *pieceTwo = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor redColor] andShape:@[row0, row1, row2]];
 
     // Piece 2
-    Piece *pieceThree = [[Piece alloc] initWithWidth:3 andHeight:2 andColor:[UIColor blueColor] andShape:@[@3, @2, @3]];
+    row0 = @[@1];
+    row1 = @[@1];
+    row2 = @[@1];
+    row3 = @[@1];
+    Piece *pieceThree = [[Piece alloc] initWithColumns:1 andRows:4 andColor:[UIColor redColor] andShape:@[row0, row1, row2, row3]];
 
     // Piece 2
-    Piece *pieceFour = [[Piece alloc] initWithWidth:3 andHeight:2 andColor:[UIColor blueColor] andShape:@[@7, @5]];
+    row0 = @[@1, @1, @1, @1];
+    Piece *pieceFour = [[Piece alloc] initWithColumns:4 andRows:1 andColor:[UIColor redColor] andShape:@[row0]];
 
+    // Piece 2
+    row0 = @[@0, @1, @0];
+    row1 = @[@1, @1, @1];
+    row2 = @[@0, @1, @0];
+    Piece *pieceFive = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor redColor] andShape:@[row0, row1, row2]];
+
+    [self.piecesOnBoardArray addObjectsFromArray:@[pieceOne, pieceTwo, pieceThree, pieceFour, pieceFive]];
     
 }
 
@@ -203,12 +226,6 @@
 
 -(IBAction)didTapRedrawBoard:(id)sender {
     
-    for (UIView *view in self.piecesOnBoardArray) {
-        [view removeFromSuperview];
-    }
-    
-    [self.piecesOnBoardArray removeAllObjects];
-    
     [self drawBoard];
 }
 
@@ -217,12 +234,12 @@
 #pragma mark Panning methods
 
 -(void)addPanningPieceToBoard {
+    
+    // Get shape
+    Piece *pieceToAdd = [self.piecesOnBoardArray objectAtIndex:4];
+    
+    self.panningView = [pieceToAdd vendMovingViewForCellSize:self.pieceSize];
 
-    self.panningView = [[UIView alloc] initWithFrame:CGRectMake(self.pieceView.frame.origin.x,
-                                                                self.pieceView.frame.origin.y,
-                                                                self.pieceSize.width - 2,
-                                                                self.pieceSize.height -2)];
-    [self.panningView setBackgroundColor:[UIColor greenColor]];
     [self.view addSubview:self.panningView];
 
 }
@@ -298,7 +315,6 @@
                                       droppedPiece.frame.size.height)];
 
     [self.view addSubview:droppedPiece];
-    [self.piecesOnBoardArray addObject:droppedPiece];
 
     // Add gesture recognizer to piece to allow removal
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapToRemovePieceFromBoard:)];

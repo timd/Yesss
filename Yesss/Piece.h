@@ -11,13 +11,15 @@
 
 @interface Piece : NSObject
 
-@property (nonatomic) NSUInteger width;
-@property (nonatomic) NSUInteger height;
+@property (nonatomic) NSUInteger columns;
+@property (nonatomic) NSUInteger rows;
 @property (nonatomic, strong) UIColor *color;
 @property (nonatomic) CGPoint origin;
 @property (nonatomic, strong) NSArray *shapeArray;
 @property (nonatomic) BOOL onBoard;
 
--(instancetype)initWithWidth:(NSUInteger)width andHeight:(NSUInteger)height andColor:(UIColor *)color andShape:(NSArray *)shape;
+-(instancetype)initWithColumns:(NSUInteger)columns andRows:(NSUInteger)rows andColor:(UIColor *)color andShape:(NSArray *)shape;
+-(UIView *)vendMovingViewForCellSize:(CGSize)cellSize;
+-(UIView *)vendBoardViewForCellSize:(CGSize)cellSize;
 
 @end
