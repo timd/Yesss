@@ -90,12 +90,36 @@
 
             // Check if cell should be occupied
             int currentRowValue = [[rowArray objectAtIndex:col] intValue];
+
+            UIColor *backgroundColor = nil;
             
-            if (currentRowValue != 0) {
-                [cellView setBackgroundColor:[UIColor redColor]];
-            } else {
-                [cellView setBackgroundColor:[UIColor clearColor]];
+            switch (currentRowValue) {
+                case 1:
+                    backgroundColor = [UIColor redColor];
+                    break;
+
+                case 2:
+                    backgroundColor = [UIColor blueColor];
+                    break;
+
+                case 3:
+                    backgroundColor = [UIColor greenColor];
+                    break;
+
+                case 4:
+                    backgroundColor = [UIColor purpleColor];
+                    break;
+
+                case 5:
+                    backgroundColor = [UIColor brownColor];
+                    break;
+
+                default:
+                    backgroundColor = [UIColor clearColor];
+                    break;
             }
+            
+            [cellView setBackgroundColor:backgroundColor];
 
             [self.boardView addSubview:cellView];
             
@@ -120,29 +144,34 @@
     // Piece 1
     row0 = @[@1];
     Piece *pieceOne = [[Piece alloc] initWithColumns:1 andRows:1 andColor:[UIColor redColor] andShape:@[row0]];
+    [pieceOne setShapeId:1];
     
     // Piece 2
-    row0 = @[@1, @1];
-    row1 = @[@0, @1];
-    row2 = @[@1, @1];
+    row0 = @[@2, @2];
+    row1 = @[@0, @2];
+    row2 = @[@2, @2];
     Piece *pieceTwo = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor blueColor] andShape:@[row0, row1, row2]];
+    [pieceTwo setShapeId:2];
 
     // Piece 2
-    row0 = @[@1];
-    row1 = @[@1];
-    row2 = @[@1];
-    row3 = @[@1];
+    row0 = @[@3];
+    row1 = @[@3];
+    row2 = @[@3];
+    row3 = @[@3];
     Piece *pieceThree = [[Piece alloc] initWithColumns:1 andRows:4 andColor:[UIColor greenColor] andShape:@[row0, row1, row2, row3]];
+    [pieceThree setShapeId:3];
 
     // Piece 2
-    row0 = @[@1, @1, @1, @1];
+    row0 = @[@4, @4, @4, @4];
     Piece *pieceFour = [[Piece alloc] initWithColumns:4 andRows:1 andColor:[UIColor yellowColor] andShape:@[row0]];
+    [pieceFour setShapeId:4];
 
     // Piece 2
-    row0 = @[@0, @1, @0];
-    row1 = @[@1, @1, @1];
-    row2 = @[@0, @1, @0];
-    Piece *pieceFive = [[Piece alloc] initWithColumns:2 andRows:3 andColor:[UIColor brownColor] andShape:@[row0, row1, row2]];
+    row0 = @[@0, @5, @0];
+    row1 = @[@5, @5, @5];
+    row2 = @[@0, @5, @0];
+    Piece *pieceFive = [[Piece alloc] initWithColumns:3 andRows:3 andColor:[UIColor brownColor] andShape:@[row0, row1, row2]];
+    [pieceFive setShapeId:5];
 
     [self.piecesOnBoardArray addObjectsFromArray:@[pieceOne, pieceTwo, pieceThree, pieceFour, pieceFive]];
     
@@ -337,15 +366,42 @@
     [self.yCoord setText:@"-"];
     
     // Add the piece to the board array
-    // Convert finger location to cell
+    // Convert finger location to piece origin
     int droppedRow = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
     int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
+    NSUInteger numberOfAffectedRows = self.pieceBeingMoved.rows;
+    NSUInteger numberOfAffectedCols = self.pieceBeingMoved.columns;
     
-    // Get the current row value
-    NSMutableArray *rowArray = [self.boardArray objectAtIndex:droppedRow];
+    // Get the affected rows
+    // Create holding tank for affected rows
+    NSMutableArray *affectedRows = [[NSMutableArray alloc] init];
     
-    // Update the current row
-    [rowArray replaceObjectAtIndex:droppedCol withObject:@1];
+    // Grab the affected rows
+    for (int row = droppedRow; row < (droppedRow + numberOfAffectedRows); row++) {
+        [affectedRows addObject:[self.boardArray objectAtIndex:row]];
+    }
+    
+    NSArray *shapeArray = self.pieceBeingMoved.shapeArray;
+    
+    // Iterate across each affected row
+    for (int rowNumber = 0; rowNumber < [affectedRows count]; rowNumber++) {
+        
+        NSMutableArray *rowBeingUpdated = [affectedRows objectAtIndex:rowNumber];
+        NSArray *shapeRow = [shapeArray objectAtIndex:rowNumber];
+        
+        // For each column in the affected row, update it
+        for (int columnCount = 0; columnCount < numberOfAffectedCols; columnCount++) {
+            
+            // Get the corresponding element from the shape array
+            NSNumber *shapeCell = [shapeRow objectAtIndex:columnCount];
+            
+            // Update the changed element
+            [rowBeingUpdated replaceObjectAtIndex:(columnCount + droppedCol) withObject:shapeCell];
+            
+        }
+        
+    }
+    
     
     self.pieceBeingMoved = nil;
     

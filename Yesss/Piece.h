@@ -11,6 +11,7 @@
 
 @interface Piece : NSObject
 
+@property (nonatomic) NSUInteger shapeId;
 @property (nonatomic) NSUInteger columns;
 @property (nonatomic) NSUInteger rows;
 @property (nonatomic, strong) UIColor *color;

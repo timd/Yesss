@@ -37,24 +37,16 @@
     // Iterate across each row (max number of rows = self.height
     for (int row = 0; row < self.rows; row++) {
         
-        NSLog(@"***\n rowValue = %d", row);
-    
         // Get array for the row
         NSArray *rowArray = [self.shapeArray objectAtIndex:row];
         
         // Iterate across the columns
         for (int col = 0; col < [rowArray count]; col++) {
-
-            NSLog(@"col = %d\n", col);
             
             // Mask to get value in this column
-            int cellValue = [[rowArray objectAtIndex:col] intValue];
-            NSLog(@"cellValue = %d", cellValue);
+            NSNumber *cellValue = [rowArray objectAtIndex:col];
             
-            int isPiece = cellValue & 1;
-            NSLog(@"isPiece = %d \n\n", isPiece);
-
-            if (isPiece != 0) {
+            if (![cellValue isEqualToNumber:@0]) {
             
                 // Calculate X position of block
                 float xPosition = col * cellSize.width;
