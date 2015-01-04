@@ -19,11 +19,13 @@
 @property (nonatomic, weak) IBOutlet UIView *templatePieceFive;
 
 @property (nonatomic, strong) UIView *panningView;
+@property (nonatomic, strong) NSMutableArray *piecesArray;
 @property (nonatomic, strong) NSMutableArray *piecesOnBoardArray;
 
 @property (nonatomic, strong) NSMutableArray *boardArray;
 
 @property (nonatomic, strong) Piece *pieceBeingMoved;
+@property (nonatomic) BOOL shouldCancelPiecePlacement;
 
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic) CGSize pieceSize;
@@ -134,7 +136,7 @@
 
 -(void)setupPieces {
     
-    self.piecesOnBoardArray = [[NSMutableArray alloc] init];
+    self.piecesArray = [[NSMutableArray alloc] init];
     
     NSArray *row0 = nil;
     NSArray *row1 = nil;
@@ -173,7 +175,7 @@
     Piece *pieceFive = [[Piece alloc] initWithColumns:3 andRows:3 andColor:[UIColor brownColor] andShape:@[row0, row1, row2]];
     [pieceFive setShapeId:5];
 
-    [self.piecesOnBoardArray addObjectsFromArray:@[pieceOne, pieceTwo, pieceThree, pieceFour, pieceFive]];
+    [self.piecesArray addObjectsFromArray:@[pieceOne, pieceTwo, pieceThree, pieceFour, pieceFive]];
     
 }
 
@@ -212,6 +214,8 @@
     
     [self.boardView addGestureRecognizer:pieceRemover];
     
+    self.piecesOnBoardArray = [[NSMutableArray alloc] init];
+    
     
 }
 
@@ -235,10 +239,9 @@
 
     // Add view
     if (panRecognizer.state == UIGestureRecognizerStateBegan) {
-        
-        // Add moving piece to the board
+
         [self addPanningPieceToBoardWithPieceNumber:tag];
-        
+
     }
     
     if (panRecognizer.state == UIGestureRecognizerStateChanged) {
@@ -265,17 +268,39 @@
     int droppedRow = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
     int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
 
-    // Check if there is a piece at the tapped location
-    if ([self checkForOccupiedDropLocation:constrainedDropPoint]) {
+    NSMutableArray *droppedRowArray = [self.boardArray objectAtIndex:droppedRow];
+    NSNumber *pieceType = [droppedRowArray objectAtIndex:droppedCol];
     
-        // There is a piece, need to remove it
-        NSMutableArray *rowArray = [self.boardArray objectAtIndex:droppedRow];
-
-        [rowArray replaceObjectAtIndex:droppedCol withObject:@0];
-        
-        [self drawBoard];
-
+    if ([pieceType isEqualToNumber:@0]) {
+        // cell is empty
+        return;
     }
+    
+    // Iterate across all rows and cols to remove pieces of this type
+    for (NSMutableArray *rowArray in self.boardArray) {
+        
+        for (int col = 0; col < [rowArray count]; col++) {
+            
+            NSNumber *cellContents = [rowArray objectAtIndex:col];
+            
+            if ([cellContents isEqualToNumber:pieceType]) {
+                [rowArray replaceObjectAtIndex:col withObject:@0];
+            }
+            
+        }
+        
+    }
+    
+    // Find and remove the piece from the piecesOnBoard array
+    NSUInteger indexOfPieceToRemove = [self.piecesOnBoardArray indexOfObjectPassingTest:^BOOL(Piece *piece, NSUInteger idx, BOOL *stop) {
+        return (piece.shapeId == [pieceType integerValue]);
+    }];
+    
+    if (indexOfPieceToRemove != NSNotFound) {
+        [self.piecesOnBoardArray removeObjectAtIndex:indexOfPieceToRemove];
+    }
+    
+    [self drawBoard];
     
 }
 
@@ -291,7 +316,7 @@
 -(void)addPanningPieceToBoardWithPieceNumber:(NSUInteger)tag {
     
     // Get shape
-    Piece *pieceToAdd = [self.piecesOnBoardArray objectAtIndex:tag];
+    Piece *pieceToAdd = [self.piecesArray objectAtIndex:(tag - 1)];
     
     self.panningView = [pieceToAdd vendMovingViewForCellSize:self.pieceSize];
     
@@ -306,7 +331,9 @@
     [self.xCoord setText:[NSString stringWithFormat:@"%0.0f", fingerLocation.x]];
     [self.yCoord setText:[NSString stringWithFormat:@"%0.0f", fingerLocation.y]];
 
-    [self.panningView setFrame:CGRectMake(fingerLocation.x, fingerLocation.y, self.panningView.frame.size.width, self.panningView.frame.size.height)];
+    [self.panningView setFrame:CGRectMake(fingerLocation.x,
+                                          fingerLocation.y,
+                                          self.panningView.frame.size.width, self.panningView.frame.size.height)];
 
 }
 
@@ -404,6 +431,9 @@
         
     }
     
+    // Add dropped piece to the piecesOnBoard array
+    [self.piecesOnBoardArray addObject:self.pieceBeingMoved];
+    
     self.pieceBeingMoved = nil;
     
     [self drawBoard];
@@ -432,15 +462,20 @@
 
 -(BOOL)checkForIllegalDropLocation:(CGPoint)constrainedDropPoint {
     
+    // Calculate size of shape
+    float totalPieceWidth = self.pieceBeingMoved.columns * self.cellSize.width;
+    float totalPieceHeight = self.pieceBeingMoved.rows * self.cellSize.height;
+    
+    
     // Check if dropped piece extends beyond board boundaries
-    float rightEdgeOfPiece = constrainedDropPoint.x + self.pieceSize.width;
+    float rightEdgeOfPiece = constrainedDropPoint.x + totalPieceWidth;
     
     if (rightEdgeOfPiece > (self.boardView.frame.size.width)) {
         return YES;
     }
     
     // Calculate bottom edge of peice and adjust for status bar offset
-    float bottomEdgeOfPiece = constrainedDropPoint.y + self.pieceSize.height - kStatusBarOffsetValue;
+    float bottomEdgeOfPiece = constrainedDropPoint.y + totalPieceHeight - kStatusBarOffsetValue;
 
     if (bottomEdgeOfPiece > (self.boardView.frame.size.height)) {
         return YES;
