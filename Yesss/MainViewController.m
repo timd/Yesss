@@ -87,13 +87,14 @@
             
             UIView *cellView = [[UIView alloc] initWithFrame:CGRectMake(xPosition, yPosition, self.cellSize.width, self.cellSize.height)];
             
-            cellView.layer.borderColor = [UIColor blackColor].CGColor;
+            cellView.layer.borderColor = [UIColor lightGrayColor].CGColor;
             cellView.layer.borderWidth = kCellBorderWidth;
-
+            
             // Check if cell should be occupied
             int currentRowValue = [[rowArray objectAtIndex:col] intValue];
 
             UIColor *backgroundColor = nil;
+            float cornerRadius = cellView.frame.size.width / 2;
             
             switch (currentRowValue) {
                 case 1:
@@ -115,14 +116,24 @@
                 case 5:
                     backgroundColor = [UIColor brownColor];
                     break;
+                    
+                case 99:
+                    backgroundColor = [UIColor lightGrayColor];
+                    cornerRadius = 0;
+                    break;
 
                 default:
                     backgroundColor = [UIColor clearColor];
                     break;
             }
             
-            [cellView setBackgroundColor:backgroundColor];
-
+            // Create blob and insert
+            UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cellView.frame.size.width, cellView.frame.size.height)];
+            [circleView setBackgroundColor:backgroundColor];
+            circleView.layer.cornerRadius = cornerRadius;
+            [cellView addSubview:circleView];
+            
+            // Colour block
             [self.boardView addSubview:cellView];
             
         }
@@ -181,16 +192,16 @@
 
 -(void)setupBoard {
     
-    NSMutableArray *row0 = [@[@1,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row1 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row2 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row3 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row4 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row5 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row6 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row7 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row8 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
-    NSMutableArray *row9 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row0 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@0] mutableCopy];
+    NSMutableArray *row1 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@0,@99] mutableCopy];
+    NSMutableArray *row2 = [@[@0,@0,@0,@0,@0,@0,@0,@0,@99,@99] mutableCopy];
+    NSMutableArray *row3 = [@[@0,@0,@0,@0,@0,@0,@0,@99,@99,@99] mutableCopy];
+    NSMutableArray *row4 = [@[@0,@0,@0,@0,@0,@0,@99,@99,@99,@99] mutableCopy];
+    NSMutableArray *row5 = [@[@0,@0,@0,@0,@0,@99,@99,@99,@99,@99] mutableCopy];
+    NSMutableArray *row6 = [@[@0,@0,@0,@0,@99,@99,@99,@99,@99,@99] mutableCopy];
+    NSMutableArray *row7 = [@[@0,@0,@0,@99,@99,@99,@99,@99,@99,@99] mutableCopy];
+    NSMutableArray *row8 = [@[@0,@0,@99,@99,@99,@99,@99,@99,@99,@99] mutableCopy];
+    NSMutableArray *row9 = [@[@0,@99,@99,@99,@99,@99,@99,@99,@99,@99] mutableCopy];
     
     NSArray *boardLayout = @[row0, row1, row2, row3, row4, row5, row6, row7, row8, row9];
     self.boardArray = [boardLayout mutableCopy];

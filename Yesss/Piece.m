@@ -63,9 +63,11 @@
                 // Colour block
                 [blockView setBackgroundColor:self.color];
                 [blockView.layer setBorderWidth:1.0f];
+                blockView.layer.cornerRadius = (cellSize.width / 2);
                 [blockView.layer setBorderColor:[UIColor lightGrayColor].CGColor];
                 
                 // Add block view to container view
+                
                 [containerView addSubview:blockView];
                 
             }
