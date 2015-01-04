@@ -456,23 +456,60 @@
     // Convert finger location to cell
     int droppedRow = [self calculateRowNumberForConstrainedDropPoint:constrainedDropPoint];
     int droppedCol = [self calculateColNumberForConstrainedDropPoint:constrainedDropPoint];
+    NSUInteger numberOfAffectedRows = self.pieceBeingMoved.rows;
+    NSUInteger numberOfAffectedCols = self.pieceBeingMoved.columns;
     
-    // Check if there's a piece at this location
-    // Get row from board array
+    // By default, allow the placement here
+    BOOL placementWillFail = NO;
     
-    // Check if cell is occupied
-    NSMutableArray *rowArray = [self.boardArray objectAtIndex:droppedRow];
+    // Get the affected rows
+    // Create holding tank for affected rows
+    NSMutableArray *affectedRows = [[NSMutableArray alloc] init];
     
-    int currentRowValue = [[rowArray objectAtIndex:droppedCol] intValue];
+    // Grab the affected rows
+    for (int row = droppedRow; row < (droppedRow + numberOfAffectedRows); row++) {
+        [affectedRows addObject:[self.boardArray objectAtIndex:row]];
+    }
+    
+    NSArray *shapeArray = self.pieceBeingMoved.shapeArray;
+    
+    // Iterate across each affected row
+    for (int rowNumber = 0; rowNumber < [affectedRows count]; rowNumber++) {
+        
+        NSMutableArray *placementRow = [affectedRows objectAtIndex:rowNumber];
+        NSArray *shapeRow = [shapeArray objectAtIndex:rowNumber];
+        
+        // For each column in the affected row, update it
+        for (int columnCount = 0; columnCount < numberOfAffectedCols; columnCount++) {
+            
+            /*      shape cell = 0, placement cell = 0, placement OK
+                    shape cell = 1, placement cell = 0, placement OK
+                    shape cell = 1, placement cell = 1, placement NOK   */
 
-    if (currentRowValue != 0) {
-        NSLog(@"The cell is occuplied");
-        return YES;
-    } else {
-        NSLog(@"the cell is empty");
-        return NO;
+            // Get the corresponding element from the shape array
+            NSNumber *shapeCell = [shapeRow objectAtIndex:columnCount];
+            NSNumber *placementCell = [placementRow objectAtIndex:(columnCount + droppedCol)];
+            
+            if ([shapeCell isEqualToNumber:@0]) {
+                
+                // Shape cell is empty
+                placementWillFail = NO;
+                
+            } else {
+                
+                // Shape cell is full
+                if (![placementCell isEqualToNumber:@0]) {
+                    // Placement cell is full, therefore we have to fail
+                    return YES;
+                }
+                
+            }
+            
+        }
+        
     }
 
+    return placementWillFail;
 }
 
 -(int)calculateRowNumberForConstrainedDropPoint:(CGPoint)constrainedDropPoint {
