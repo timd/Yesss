@@ -398,7 +398,7 @@
             
             // Update the changed element if there's something there
             if (![shapeCell isEqualToNumber:@0]) {
-                [rowBeingUpdated replaceObjectAtIndex:(columnCount + droppedCol) withObject:shapeCell];
+                [rowBeingUpdated replaceObjectAtIndex:(columnCount + droppedCol) withObject:[NSNumber numberWithInt:self.pieceBeingMoved.shapeId]];
             }
             
         }
